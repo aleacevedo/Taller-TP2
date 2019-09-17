@@ -32,13 +32,14 @@ int Compressor::one_run() {
 }
 
 char *Compressor::get_compressed(char *dest) {
-  size_t shift = 0;
+  //  size_t shift = 0;
+  uint8_t pos = 0;
   for (int i = 0; i < this->compressed.size(); i++) {
-    bool aux = this->compressed.back();
+    pos = (i%8) * 2;
+    if (this->compressed.back()) {
+      dest[i / 8] = dest[i / 8] | pos;
+    }
     this->compressed.pop_back();
-    dest[i/8] += (aux >> shift);
-    shift++;
-    if(shift==8) shift = 0;
   }
   return dest;
 }
@@ -70,14 +71,12 @@ void Compressor::save(int source, size_t offset) {
   }
 }
 void Compressor::compress(size_t new_len) {
-  printf("compressing\n");
-  printf(" %zu\n", this->size);
   for (size_t ind = 0; ind < this->size; ind++) {
-    printf("%zu, %zu\n",ind, this->size);
-    unsigned int aux = this->numbers[this->size - ind];
-    for (size_t cont = 0; cont < new_len; cont++) {
-      this->compressed.push_back(aux % 2);
-      aux = aux >> 1;
+    unsigned int aux = this->numbers[ind];
+    for (size_t cont = new_len; cont >= 0; cont--) {
+      unsigned int bitMask = pow(2, cont);
+      bool bit = bitMask & aux;
+      this->compressed.push_back(bit);
     }
   }
 }
