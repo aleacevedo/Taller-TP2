@@ -34,7 +34,7 @@ int Compressor::one_run() {
 char *Compressor::get_compressed(char *dest) {
   size_t ind = 0;
   int pos = 7;
-  for (int i = 0; i < this->compressed.size(); i++) {
+  for (size_t i = 0; i < this->compressed.size(); i++) {
     uint8_t bit_mask = pow(2, pos);
     if (this->compressed[i]) {
       dest[ind] = dest[ind] | bit_mask;
