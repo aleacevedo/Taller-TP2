@@ -89,7 +89,7 @@ void Compressor::compress(size_t new_len) {
     size_t shift_size = (INT_SIZE - used_bits - new_len);
     used_bits += new_len;
     free_bits -= new_len;
-    printf("Print number %i in position %i\n", aux ,ind);
+    printf("Print number %i in position %zu\n", aux ,ind);
     testing_print_int((char *)&aux);
     aux = aux << shift_size;
     printf("Shift of size %zu\n", shift_size);
