@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
   }
   file_in.close();
   file_out.close();
+  delete[] buffer;
   return 0;
 }
 

@@ -32,14 +32,18 @@ int Compressor::one_run() {
 }
 
 char *Compressor::get_compressed(char *dest) {
-  //  size_t shift = 0;
-  uint8_t pos = 0;
+  size_t ind = 0;
+  int pos = 7;
   for (int i = 0; i < this->compressed.size(); i++) {
-    pos = (i%8) * 2;
-    if (this->compressed.back()) {
-      dest[i / 8] = dest[i / 8] | pos;
+    uint8_t bit_mask = pow(2, pos);
+    if (this->compressed[i]) {
+      dest[ind] = dest[ind] | bit_mask;
     }
-    this->compressed.pop_back();
+    pos--;
+    if(pos < 0){
+      ind++;
+      pos = 7;
+    }
   }
   return dest;
 }
@@ -61,54 +65,17 @@ int Compressor::read() {
   }
   return this->file_in.gcount();
 }
-
-void Compressor::save(int source, size_t offset) {
-  char *aux = (char *) &source;
-  for (int byte_ind = 0; byte_ind < 4; byte_ind++) {
-    offset += byte_ind;
-    if (offset >= this->size_compressed) break;
-    this->compressed[offset] = this->compressed[offset] | aux[3 - byte_ind];
-  }
-}
 void Compressor::compress(size_t new_len) {
   for (size_t ind = 0; ind < this->size; ind++) {
     unsigned int aux = this->numbers[ind];
-    for (size_t cont = new_len; cont >= 0; cont--) {
-      unsigned int bitMask = pow(2, cont);
-      bool bit = bitMask & aux;
+    for (size_t cont = new_len; cont > 0; cont--) {
+      unsigned int bit_mask = pow(2, cont-1);
+      bool bit = bit_mask & aux;
       this->compressed.push_back(bit);
     }
   }
 }
-/*
-void Compressor::compress(size_t new_len) {
-  this->size_compressed = (size_t) ceil(((new_len + 0.0) * this->size) / BYTE_SIZE);
-  this->compressed = new char[this->size_compressed]();
-  int used_bits = 0;
-  int free_bits = BYTE_SIZE;
-  int ind_dest = 0;
-  for (size_t ind = 0; ind < this->size; ind++) {
-    unsigned int aux = this->numbers[ind];
-    printf("------------------------------------\n");
-    printf("Used bits: %i, New len: %zu, Free bits: %i\n", used_bits, new_len, free_bits);
-    size_t shift_size = (INT_SIZE - used_bits - new_len);
-    used_bits += new_len;
-    free_bits -= new_len;
-    printf("Print number %i in position %zu\n", aux ,ind);
-    testing_print_int((char *)&aux);
-    aux = aux << shift_size;
-    printf("Shift of size %zu\n", shift_size);
-    testing_print_int((char *)&aux);
-    printf("Used bits: %i, New len: %zu, Free bits: %i\n", used_bits, new_len, free_bits);
-    this->save(aux, ind_dest);
-    printf("------------------------------------\n");
-    if (free_bits <= 0) {
-      used_bits = used_bits - BYTE_SIZE;
-      free_bits = free_bits + BYTE_SIZE;
-      ind_dest++;
-    }
-  }
-}*/
+
 unsigned int Compressor::get_min() {
   unsigned int min = this->numbers[0];
   for (size_t ind = 1; ind < this->size; ind++) {
