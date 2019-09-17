@@ -2,22 +2,28 @@
 #define _COMPRESSOR_H_
 #include <fstream>
 
+#define BYTE_SIZE 8
+#define INT_SIZE 32
+
 using std::fstream;
 
 class Compressor {
 
   fstream &file_in;
   const size_t size;
-  const size_t in_bytes;
+  size_t size_compressed;
   unsigned int *numbers;
   char *compressed;
 
  public:
   Compressor(fstream &file_in, const size_t size);
   int one_run();
+  char *get_compressed();
+  size_t get_size_compressed();
   ~Compressor();
 
  private:
+  void save(int source, size_t offset);
   int read();
   void compress(size_t new_len);
   unsigned int get_min();
