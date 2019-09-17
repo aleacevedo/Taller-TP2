@@ -1,11 +1,14 @@
 #ifndef _COMPRESSOR_H_
 #define _COMPRESSOR_H_
 #include <fstream>
+#include <vector>
+
 
 #define BYTE_SIZE 8
 #define INT_SIZE 32
 
 using std::fstream;
+using std::vector;
 
 class Compressor {
 
@@ -13,12 +16,12 @@ class Compressor {
   const size_t size;
   size_t size_compressed;
   unsigned int *numbers;
-  char *compressed;
+  vector<bool> compressed;
 
  public:
   Compressor(fstream &file_in, const size_t size);
   int one_run();
-  char *get_compressed();
+  char *get_compressed(char* dest);
   size_t get_size_compressed();
   ~Compressor();
 

@@ -1,12 +1,11 @@
 #include "compressor.h"
 #include <string>
-#include <fstream>
 #include <math.h>
 #include "utils.h"
 
 #define SHOW(T, V) do { T x = V; print_bits((unsigned char*) &x, sizeof(x)); } while(0)
 
-void testing_print_int(char *test){
+void testing_print_int(char *test) {
   print_byte_as_bits(test[3]);
   printf(" ");
   print_byte_as_bits(test[2]);
@@ -17,7 +16,6 @@ void testing_print_int(char *test){
   printf("\n");
 }
 
-
 Compressor::Compressor(fstream &file_in, const size_t size) :
     file_in(file_in),
     size(size) {
@@ -27,21 +25,23 @@ Compressor::Compressor(fstream &file_in, const size_t size) :
 int Compressor::one_run() {
   if (this->read() == -1) return -1;
   unsigned int min = this->get_min();
-  size_t position_MSB = this->subtract(min);
-  compress(position_MSB);
-  printf("---------------------------\n");
-  for (size_t i = 0; i < this->get_size_compressed(); i++) {
-    print_byte_as_bits(this->get_compressed()[i]);
-    printf(" ");
-  }
-  printf("\n---------------------------\n");
+  size_t len_numbers = this->subtract(min);
+  this->size_compressed = (size_t) ceil(((len_numbers + 0.0) * this->size) / BYTE_SIZE);
+  this->compress(len_numbers);
   return 0;
 }
 
-char *Compressor::get_compressed() {
-  return this->compressed;
+char *Compressor::get_compressed(char *dest) {
+  size_t shift = 0;
+  for (int i = 0; i < this->compressed.size(); i++) {
+    bool aux = this->compressed.back();
+    this->compressed.pop_back();
+    dest[i/8] += (aux >> shift);
+    shift++;
+    if(shift==8) shift = 0;
+  }
+  return dest;
 }
-
 size_t Compressor::get_size_compressed() {
   return this->size_compressed;
 }
@@ -62,20 +62,26 @@ int Compressor::read() {
 }
 
 void Compressor::save(int source, size_t offset) {
-  char *aux = (char*) &source;
+  char *aux = (char *) &source;
   for (int byte_ind = 0; byte_ind < 4; byte_ind++) {
     offset += byte_ind;
     if (offset >= this->size_compressed) break;
     this->compressed[offset] = this->compressed[offset] | aux[3 - byte_ind];
   }
-  printf("Compressed \n");
-  for (size_t i = 0; i < this->get_size_compressed(); i++) {
-    print_byte_as_bits(this->get_compressed()[i]);
-    printf(" ");
-  }
-  printf("\n");
 }
-
+void Compressor::compress(size_t new_len) {
+  printf("compressing\n");
+  printf(" %zu\n", this->size);
+  for (size_t ind = 0; ind < this->size; ind++) {
+    printf("%zu, %zu\n",ind, this->size);
+    unsigned int aux = this->numbers[this->size - ind];
+    for (size_t cont = 0; cont < new_len; cont++) {
+      this->compressed.push_back(aux % 2);
+      aux = aux >> 1;
+    }
+  }
+}
+/*
 void Compressor::compress(size_t new_len) {
   this->size_compressed = (size_t) ceil(((new_len + 0.0) * this->size) / BYTE_SIZE);
   this->compressed = new char[this->size_compressed]();
@@ -103,7 +109,7 @@ void Compressor::compress(size_t new_len) {
       ind_dest++;
     }
   }
-}
+}*/
 unsigned int Compressor::get_min() {
   unsigned int min = this->numbers[0];
   for (size_t ind = 1; ind < this->size; ind++) {
