@@ -30,7 +30,7 @@ int Compressor::one_run() {
   size_t position_MSB = this->subtract(min);
   compress(position_MSB);
   printf("---------------------------\n");
-  for (int i = 0; i < this->get_size_compressed(); i++) {
+  for (size_t i = 0; i < this->get_size_compressed(); i++) {
     print_byte_as_bits(this->get_compressed()[i]);
     printf(" ");
   }
@@ -53,7 +53,7 @@ Compressor::~Compressor() {
 int Compressor::read() {
   if (!this->file_in.good()) return -1;
   char aux[4];
-  for (int readed = 0; readed < this->size; readed++) {
+  for (size_t readed = 0; readed < this->size; readed++) {
     this->file_in.read(aux, 4);
     int *aux_in = (int *) aux;
     this->numbers[readed] = ntohl(*aux_in);
@@ -69,7 +69,7 @@ void Compressor::save(int source, size_t offset) {
     this->compressed[offset] = this->compressed[offset] | aux[3 - byte_ind];
   }
   printf("Compressed \n");
-  for (int i = 0; i < this->get_size_compressed(); i++) {
+  for (size_t i = 0; i < this->get_size_compressed(); i++) {
     print_byte_as_bits(this->get_compressed()[i]);
     printf(" ");
   }
@@ -82,7 +82,7 @@ void Compressor::compress(size_t new_len) {
   int used_bits = 0;
   int free_bits = BYTE_SIZE;
   int ind_dest = 0;
-  for (int ind = 0; ind < this->size; ind++) {
+  for (size_t ind = 0; ind < this->size; ind++) {
     unsigned int aux = this->numbers[ind];
     printf("------------------------------------\n");
     printf("Used bits: %i, New len: %zu, Free bits: %i\n", used_bits, new_len, free_bits);
@@ -106,14 +106,14 @@ void Compressor::compress(size_t new_len) {
 }
 unsigned int Compressor::get_min() {
   unsigned int min = this->numbers[0];
-  for (int ind = 1; ind < this->size; ind++) {
+  for (size_t ind = 1; ind < this->size; ind++) {
     min = this->numbers[ind] < min ? this->numbers[ind] : min;
   }
   return min;
 }
 int Compressor::subtract(unsigned int value) {
   size_t position = 0;
-  for (int ind = 0; ind < this->size; ind++) {
+  for (size_t ind = 0; ind < this->size; ind++) {
     this->numbers[ind] = this->numbers[ind] - value;
     size_t aux_pos = get_MSB_position(this->numbers[ind]);
     position = aux_pos > position ? aux_pos : position;
