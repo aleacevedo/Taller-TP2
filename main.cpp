@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
   Compressor comp(file_in, 4);
   comp.one_run();
   file_out.write(comp.get_compressed(), comp.get_size_compressed());
-  for (int i = 0; i < comp.get_size_compressed(); i++) {
+  for (size_t i = 0; i < comp.get_size_compressed(); i++) {
     print_byte_as_bits(comp.get_compressed()[i]);
   }
   file_in.close();
