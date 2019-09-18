@@ -15,23 +15,29 @@ class Compressor {
   fstream &file_in;
   const size_t size;
   size_t size_compressed;
-  unsigned int *numbers;
+  vector<unsigned int> numbers;
   vector<bool> compressed;
+  vector<char> packed;
+  unsigned int reference;
+  unsigned int new_len;
 
  public:
   Compressor(fstream &file_in, const size_t size);
   int one_run();
-  char *get_compressed(char* dest);
+  vector<char> &get_compressed();
   size_t get_size_compressed();
+  size_t get_reference();
+  size_t get_new_len();
   ~Compressor();
 
  private:
-  void save(int source, size_t offset);
   int read();
-  void compress(size_t new_len);
+  void compress();
   unsigned int get_min();
-  int subtract(unsigned int value);
+  int subtract();
   static size_t get_MSB_position(unsigned int number);
+  void save();
+  size_t calculate_size_compresed();
 };
 
 #endif // _COMPRESSOR_H_
