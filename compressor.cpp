@@ -22,7 +22,7 @@ Compressor::Compressor(std::ifstream &file_in, const size_t size) :
 }
 
 int Compressor::one_run() {
-  if (this->read() == -1) return -1;
+  if (this->read() == 0) return 0;
   this->reference = this->get_min();
   this->new_len = this->subtract();
   this->size_compressed = this->calculate_size_compresed();
@@ -55,11 +55,19 @@ Compressor::~Compressor() {
 }
 
 int Compressor::read() {
-  if (!this->file_in.good()) return -1;
   char aux[4];
   this->numbers.clear();
   printf("Reading \n");
   for (size_t readed = 0; readed < this->size; readed++) {
+    if (!this->file_in.good()) {
+      this->numbers.pop_back();
+      if (this->numbers.size() == 0)
+        return 0;
+      for (; readed< this->size; readed++) {
+        this->numbers.push_back(0);
+      }
+      return this->file_in.gcount();
+    }
     this->file_in.read(aux, 4);
     unsigned int *aux_in = (unsigned int *) aux;
     this->numbers.push_back(ntohl(*aux_in));
@@ -71,7 +79,7 @@ int Compressor::read() {
 
 void Compressor::compress() {
   this->compressed.clear();
-  for (size_t ind = 0; ind < this->size; ind++) {
+  for (size_t ind = 0; ind < this->numbers.size(); ind++) {
     unsigned int aux = this->numbers[ind];
     for (size_t cont = this->new_len; cont > 0; cont--) {
       unsigned int bit_mask = pow(2, cont - 1);
@@ -83,7 +91,7 @@ void Compressor::compress() {
 
 unsigned int Compressor::get_min() {
   unsigned int min = this->numbers[0];
-  for (size_t ind = 1; ind < this->size; ind++) {
+  for (size_t ind = 1; ind < this->numbers.size(); ind++) {
     min = this->numbers[ind] < min ? this->numbers[ind] : min;
   }
   return min;
@@ -91,7 +99,7 @@ unsigned int Compressor::get_min() {
 
 int Compressor::subtract() {
   size_t position = 0;
-  for (size_t ind = 0; ind < this->size; ind++) {
+  for (size_t ind = 0; ind < this->numbers.size(); ind++) {
     this->numbers[ind] = this->numbers[ind] - this->reference;
     size_t aux_pos = get_MSB_position(this->numbers[ind]);
     position = aux_pos > position ? aux_pos : position;
@@ -142,5 +150,5 @@ void Compressor::save() {
 }
 
 size_t Compressor::calculate_size_compresed() {
-  return (size_t) ceil(((this->new_len + 0.0) * this->size) / BYTE_SIZE);
+  return (size_t) ceil(((this->new_len + 0.0) * this->numbers.size()) / BYTE_SIZE);
 }
