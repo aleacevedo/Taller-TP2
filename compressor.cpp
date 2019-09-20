@@ -134,7 +134,7 @@ void Compressor::save() {
   }
   this->packed.push_back(dest[ind]);
   this->size_packed = this->size_compressed + 5;
-  //delete[] dest;
+  delete[] dest;
 }
 
 size_t Compressor::calculate_size_compresed() {
