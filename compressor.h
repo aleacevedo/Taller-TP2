@@ -12,9 +12,10 @@ using std::vector;
 
 class Compressor {
 
-  fstream &file_in;
+  std::ifstream &file_in;
   const size_t size;
   size_t size_compressed;
+  size_t size_packed;
   vector<unsigned int> numbers;
   vector<bool> compressed;
   vector<char> packed;
@@ -22,12 +23,13 @@ class Compressor {
   unsigned int new_len;
 
  public:
-  Compressor(fstream &file_in, const size_t size);
+  Compressor(std::ifstream &file_in, const size_t size);
   int one_run();
   vector<char> &get_compressed();
   size_t get_size_compressed();
   size_t get_reference();
   size_t get_new_len();
+  size_t get_size_packed();
   ~Compressor();
 
  private:

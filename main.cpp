@@ -4,14 +4,20 @@
 
 
 int main(int argc, char *argv[]) {
-  fstream file_in("alotMod");
-  fstream file_out("outPut", fstream::out);
+  std::ifstream file_in("alotMod", std::ifstream::binary);
+  std::ofstream file_out("outPut", std::ofstream::binary);
   Compressor comp(file_in, 4);
-  comp.one_run();
-  vector<char> &buffer = comp.get_compressed();
-  //  file_out.write(comp.get_compressed(), comp.get_size_compressed());
-  for (size_t i = 0; i < comp.get_size_compressed(); i++) {
-    print_byte_as_bits(buffer[i]);
+  while(file_out.good()){
+    comp.one_run();
+    vector<char> &buffer = comp.get_compressed();
+    printf("New len: %zu \n", comp.get_new_len());
+    printf("Reference: %zu \n", comp.get_reference());
+    for (size_t i = 0; i < comp.get_size_packed(); i++) {
+      file_out.write(&(buffer[i]), 1);
+      print_byte_as_bits(buffer[i]);
+      printf(" ");
+    }
+    printf("\n");
   }
   file_in.close();
   file_out.close();

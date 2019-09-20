@@ -16,7 +16,7 @@ void testing_print_int(char *test) {
   printf("\n");
 }
 
-Compressor::Compressor(fstream &file_in, const size_t size) :
+Compressor::Compressor(std::ifstream &file_in, const size_t size) :
     file_in(file_in),
     size(size) {
 }
@@ -39,17 +39,33 @@ size_t Compressor::get_size_compressed() {
   return this->size_compressed;
 }
 
+size_t Compressor::get_reference() {
+  return this->reference;
+};
+
+size_t Compressor::get_new_len() {
+  return this->new_len;
+};
+
+size_t Compressor::get_size_packed() {
+  return this->size_packed;
+}
+
 Compressor::~Compressor() {
 }
 
 int Compressor::read() {
   if (!this->file_in.good()) return -1;
   char aux[4];
+  this->numbers.clear();
+  printf("Reading \n");
   for (size_t readed = 0; readed < this->size; readed++) {
     this->file_in.read(aux, 4);
     unsigned int *aux_in = (unsigned int *) aux;
     this->numbers.push_back(ntohl(*aux_in));
+    printf("Number: %u  ", this->numbers[readed]);
   }
+  printf("\n");
   return this->file_in.gcount();
 }
 
@@ -93,6 +109,14 @@ size_t Compressor::get_MSB_position(unsigned int number) {
 
 void Compressor::save() {
   char *dest = new char[this->size_compressed]();
+  unsigned int aux_big = (htonl(this->reference));
+  char *aux_char = (char *) &aux_big;
+  this->packed.clear();
+  for (size_t i = 0; i < 4; i++) {
+    this->packed.push_back(aux_char[i]);
+  }
+  aux_char = (char *) &(this->new_len);
+  this->packed.push_back(*aux_char);
   size_t ind = 0;
   int pos = 7;
   for (size_t i = 0; i < this->compressed.size(); i++) {
@@ -108,7 +132,8 @@ void Compressor::save() {
     }
   }
   this->packed.push_back(dest[ind]);
-  delete[] dest;
+  this->size_packed = this->size_compressed + 5;
+  //delete[] dest;
 }
 
 size_t Compressor::calculate_size_compresed() {
