@@ -119,20 +119,24 @@ void Compressor::save() {
   aux_char = (char *) &(this->new_len);
   this->packed.push_back(*aux_char);
   size_t ind = 0;
-  int pos = 7;
+  int pos = BYTE_SIZE;
+  bool remain = false;
   for (size_t i = 0; i < this->compressed.size(); i++) {
+    remain = true;
     uint8_t bit_mask = pow(2, pos);
     if (this->compressed[i]) {
       dest[ind] = dest[ind] | bit_mask;
     }
     pos--;
-    if (pos < 0) {
+    if (pos == 0) {
+      remain = false;
       this->packed.push_back(dest[ind]);
       ind++;
-      pos = 7;
+      pos = BYTE_SIZE;
     }
   }
-  this->packed.push_back(dest[ind]);
+  if (remain)
+    this->packed.push_back(dest[ind]);
   this->size_packed = this->size_compressed + 5;
   delete[] dest;
 }
