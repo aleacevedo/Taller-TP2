@@ -41,11 +41,11 @@ size_t Compressor::get_size_compressed() {
 
 size_t Compressor::get_reference() {
   return this->reference;
-};
+}
 
 size_t Compressor::get_new_len() {
   return this->new_len;
-};
+}
 
 size_t Compressor::get_size_packed() {
   return this->size_packed;
