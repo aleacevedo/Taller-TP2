@@ -70,6 +70,7 @@ int Compressor::read() {
 }
 
 void Compressor::compress() {
+  this->compressed.clear();
   for (size_t ind = 0; ind < this->size; ind++) {
     unsigned int aux = this->numbers[ind];
     for (size_t cont = this->new_len; cont > 0; cont--) {

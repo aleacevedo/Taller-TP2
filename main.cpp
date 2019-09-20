@@ -2,13 +2,15 @@
 #include "compressor.h"
 #include "utils.h"
 
-
 int main(int argc, char *argv[]) {
   std::ifstream file_in("alotMod", std::ifstream::binary);
   std::ofstream file_out("outPut", std::ofstream::binary);
   Compressor comp(file_in, 4);
-  while(file_out.good()){
-    comp.one_run();
+  while (file_in.good()) {
+    if (comp.one_run() == -1) {
+      printf("ALGO SALIO MAL\n");
+      return -1;
+    };
     vector<char> &buffer = comp.get_compressed();
     printf("New len: %zu \n", comp.get_new_len());
     printf("Reference: %zu \n", comp.get_reference());
