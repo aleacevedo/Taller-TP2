@@ -8,9 +8,10 @@ int main(int argc, char *argv[]) {
   Compressor comp(file_in, 4);
   while (file_in.good()) {
     if (comp.one_run() == -1) {
-      printf("ALGO SALIO MAL\n");
-      return -1;
-    };
+        file_in.close();
+        file_out.close();
+        return 0;
+    }
     vector<char> &buffer = comp.get_compressed();
     printf("New len: %zu \n", comp.get_new_len());
     printf("Reference: %zu \n", comp.get_reference());

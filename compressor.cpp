@@ -22,7 +22,7 @@ Compressor::Compressor(std::ifstream &file_in, const size_t size) :
 }
 
 int Compressor::one_run() {
-  if (this->read() == 0) return 0;
+  if (this->read() == 0) return -1;
   this->reference = this->get_min();
   this->new_len = this->subtract();
   this->size_compressed = this->calculate_size_compresed();
