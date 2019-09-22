@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
   comps.push_back(comp);
   Generator *generator = new Generator(comps, file_in);
   for (size_t ind = 0; ind<comps.size(); ind++){
-    threads.push_back(new std::thread(generator->run, ind));
+    threads.push_back(new std::thread(*generator, ind));
   }
   file_in.close();
   file_out.close();

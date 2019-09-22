@@ -41,8 +41,7 @@ size_t Generator::calc_offset(size_t size_block,
   return index_file;
 }
 
-void Generator::operator()(size_t *ind) {
-  size_t index = *ind;
+void Generator::operator()(size_t index) {
   size_t size_block = this->compressors[index]->get_size_block();
   size_t shift_file = this->calc_offset(size_block,
                                         index,

@@ -21,7 +21,7 @@ class Generator {
   void run(size_t *index);
   std::vector<std::queue<std::string>*> get_outputs();
   ~Generator();
-  void operator()(size_t *index);
+  void operator()(size_t index);
  private:
   size_t calc_offset(size_t size_block, size_t index, size_t run_number);
 };
