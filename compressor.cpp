@@ -1,6 +1,9 @@
 #include "compressor.h"
+#include <stdio.h>
 #include <string>
 #include <math.h>
+#include <fstream>
+
 #include "utils.h"
 
 #define SHOW(T, V) do { T x = V; print_bits((unsigned char*) &x, sizeof(x)); } while(0)
@@ -16,13 +19,13 @@ void testing_print_int(char *test) {
   printf("\n");
 }
 
-Compressor::Compressor(std::ifstream &file_in, const size_t size) :
+Compressor::Compressor(std::ifstream &file_in, const size_t size_block) :
     file_in(file_in),
-    size(size) {
+    size_block(size_block) {
 }
 
 int Compressor::one_run() {
-  if (this->read() == 0) return -1;
+  //  if (this->read() == 0) return -1;
   this->reference = this->get_min();
   this->new_len = this->subtract();
   this->size_compressed = this->calculate_size_compresed();
@@ -33,6 +36,10 @@ int Compressor::one_run() {
 
 vector<char> &Compressor::get_compressed() {
   return this->packed;
+}
+
+size_t Compressor::get_size_block() {
+  return this->size_block;
 }
 
 size_t Compressor::get_size_compressed() {
@@ -58,12 +65,12 @@ int Compressor::read() {
   char aux[4];
   this->numbers.clear();
   printf("Reading \n");
-  for (size_t readed = 0; readed < this->size; readed++) {
+  for (size_t readed = 0; readed < this->size_block; readed++) {
     if (!this->file_in.good()) {
       this->numbers.pop_back();
       if (this->numbers.size() == 0)
         return 0;
-      for (; readed< this->size; readed++) {
+      for (; readed< this->size_block; readed++) {
         this->numbers.push_back(0);
       }
       return this->file_in.gcount();
@@ -101,6 +108,7 @@ int Compressor::subtract() {
   size_t position = 0;
   for (size_t ind = 0; ind < this->numbers.size(); ind++) {
     this->numbers[ind] = this->numbers[ind] - this->reference;
+    printf("Number: %u  ", this->numbers[ind]);
     size_t aux_pos = get_MSB_position(this->numbers[ind]);
     position = aux_pos > position ? aux_pos : position;
   }
@@ -127,7 +135,7 @@ void Compressor::save() {
   aux_char = (char *) &(this->new_len);
   this->packed.push_back(*aux_char);
   size_t ind = 0;
-  int pos = BYTE_SIZE;
+  int pos = BYTE_SIZE - 1;
   bool remain = false;
   for (size_t i = 0; i < this->compressed.size(); i++) {
     remain = true;
@@ -136,11 +144,11 @@ void Compressor::save() {
       dest[ind] = dest[ind] | bit_mask;
     }
     pos--;
-    if (pos == 0) {
+    if (pos < 0) {
       remain = false;
       this->packed.push_back(dest[ind]);
       ind++;
-      pos = BYTE_SIZE;
+      pos = BYTE_SIZE - 1;
     }
   }
   if (remain)
