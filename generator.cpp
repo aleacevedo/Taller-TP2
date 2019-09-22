@@ -6,18 +6,27 @@ Generator::Generator(const std::vector<Compressor*> &compressors,
                       std::ifstream &in_file) :
                                       compressors(compressors),
                                       in_file(in_file) {
-  for(size_t ind = 0; ind < this->compressors.size(); ind++) {
-    std::queue<std::string> *output = new std::queue<std::string>();
-    Compressor *compressor = this->compressors[ind];
-    Params *params = new Params(compressor, ind, output);
-    this->outputs.push_back(new Output(output, new std::thread(this, params)));
+  for (size_t ind = 0; ind < this->compressors.size(); ind++) {
+    this->outputs.push_back(new std::queue<std::string>());
+    // this->threads.push_back(new std::thread(this, ind));
   }
 }
 
-void Generator::run() {
+void Generator::run(int index) {
+  size_t size_block = this->compressors[index]->get_size_block();
+  size_t shift_file = this->calc_offset(size_block,
+                                        index,
+                                        this->thread_process[index]);
+  this->mutex.lock();
+  this->in_file.seekg(shift_file, this->in_file.beg);
+  if (!this->in_file.good()) return;
+  this->compressors[index]->read();
+  this->mutex.unlock();
+  this->compressors[index]->one_run();
+  this->thread_process[index]++;
 }
 
-std::vector<Output*>& Generator::get_outputs() {
+std::vector<std::queue<std::string>*> Generator::get_outputs() {
   return this->outputs;
 }
 
@@ -31,15 +40,16 @@ size_t Generator::calc_offset(size_t size_block,
   return index_file;
 }
 
-void Generator::operator() (Params* params) {
-  size_t size_block = params->get_compressor()->get_size_block();
+void Generator::operator()(int index) {
+  size_t size_block = this->compressors[index]->get_size_block();
   size_t shift_file = this->calc_offset(size_block,
-                                        params->get_index(),
-                                        params->get_processed());
+                                        index,
+                                        this->thread_process[index]);
   this->mutex.lock();
   this->in_file.seekg(shift_file, this->in_file.beg);
   if (!this->in_file.good()) return;
-  params->get_compressor()->read();
+  this->compressors[index]->read();
   this->mutex.unlock();
-  params->get_compressor()->one_run();
+  this->compressors[index]->one_run();
+  this->thread_process[index]++;
 }

@@ -7,22 +7,22 @@
 #include <thread>
 #include <mutex>
 #include "compressor.h"
-#include "thread_params.h"
-#include "output.h"
 
 
 class Generator {
   const std::vector<Compressor*> &compressors;
-  std::vector<Output*> outputs;
+  std::vector<std::queue<std::string>*> outputs;
+  std::vector<std::thread*> threads;
+  std::vector<int> thread_process;
   std::mutex mutex;
   std::ifstream &in_file;
  public:
   Generator(const std::vector<Compressor*> &Compressors, std::ifstream &in_file);
-  void run();
-  std::vector<Output*>& get_outputs();
+  void run(int index);
+  std::vector<std::queue<std::string>*> get_outputs();
   ~Generator();
+  void operator()(int index);
  private:
-  void operator() (Params* params);
   size_t calc_offset(size_t size_block, size_t index, size_t run_number);
 };
 
