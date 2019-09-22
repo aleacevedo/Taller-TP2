@@ -6,19 +6,6 @@
 
 #include "utils.h"
 
-#define SHOW(T, V) do { T x = V; print_bits((unsigned char*) &x, sizeof(x)); } while(0)
-
-void testing_print_int(char *test) {
-  print_byte_as_bits(test[3]);
-  printf(" ");
-  print_byte_as_bits(test[2]);
-  printf(" ");
-  print_byte_as_bits(test[1]);
-  printf(" ");
-  print_byte_as_bits(test[0]);
-  printf("\n");
-}
-
 Compressor::Compressor(std::ifstream &file_in, const size_t size_block) :
     file_in(file_in),
     size_block(size_block) {
