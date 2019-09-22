@@ -2,6 +2,8 @@
 #define _COMPRESSOR_H_
 #include <stdio.h>
 #include <vector>
+#include <fstream>
+
 
 
 #define BYTE_SIZE 8
