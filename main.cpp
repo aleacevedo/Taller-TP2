@@ -20,6 +20,7 @@ int main(int argc, char *argv[]) {
   while (!generator.get_outputs()[0]->empty()){
     std::string out = generator.get_outputs()[0]->front();
     file_out << out;
+    generator.get_outputs()[0]->pop();
   }
   file_in.close();
   file_out.close();

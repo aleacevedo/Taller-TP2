@@ -12,12 +12,11 @@
 class Generator {
   const std::vector<Compressor*> &compressors;
   std::vector<std::queue<std::string>*> outputs;
-  std::vector<int> thread_process;
   std::ifstream &in_file;
+  std::vector<int> thread_process;
   std::mutex mutex;
  public:
   Generator(const std::vector<Compressor*> &Compressors, std::ifstream &in_file);
-  void run(size_t *index);
   std::vector<std::queue<std::string>*> get_outputs();
   ~Generator();
   void operator()(size_t index);
