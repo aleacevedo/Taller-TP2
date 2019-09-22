@@ -3,12 +3,11 @@
 
 
 Generator::Generator(const std::vector<Compressor*> &compressors,
-                      std::ifstream &in_file) :
+                     std::ifstream &in_file) :
                                       compressors(compressors),
                                       in_file(in_file) {
   for (size_t ind = 0; ind < this->compressors.size(); ind++) {
     this->outputs.push_back(new std::queue<std::string>());
-    // this->threads.push_back(new std::thread(this, ind));
   }
 }
 
@@ -31,6 +30,8 @@ std::vector<std::queue<std::string>*> Generator::get_outputs() {
   return this->outputs;
 }
 
+Generator::~Generator(){}
+
 size_t Generator::calc_offset(size_t size_block,
                               size_t index,
                               size_t run_number) {
@@ -42,15 +43,21 @@ size_t Generator::calc_offset(size_t size_block,
 }
 
 void Generator::operator()(size_t index) {
-  size_t size_block = this->compressors[index]->get_size_block();
-  size_t shift_file = this->calc_offset(size_block,
-                                        index,
-                                        this->thread_process[index]);
-  this->mutex.lock();
-  this->in_file.seekg(shift_file, this->in_file.beg);
-  if (!this->in_file.good()) return;
-  this->compressors[index]->read();
-  this->mutex.unlock();
-  this->compressors[index]->one_run();
-  this->thread_process[index]++;
+  
+  while(true){
+    size_t size_block = this->compressors[index]->get_size_block();
+    size_t shift_file = this->calc_offset(size_block,
+                                          index,
+                                          this->thread_process[index]);
+    this->mutex.lock();
+    this->in_file.seekg(shift_file, this->in_file.beg);
+    if (!this->in_file.good()) return;
+    this->compressors[index]->read();
+    this->mutex.unlock();
+    this->compressors[index]->one_run();
+    std::vector<char> &packed = this->compressors[index]->get_compressed();
+    std::string out(packed.begin(), packed.end());
+    this->outputs[index]->push(out);
+    this->thread_process[index]++;
+  }
 }
