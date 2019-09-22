@@ -5,7 +5,7 @@ Params::Params(Compressor &compressor,
               std::queue<std::string> *queue) : compressor(compressor),
                                                 index(index),
                                                 processed(0),
-                                                output(output) {
+                                                output(queue) {
 
                                                 }
 
