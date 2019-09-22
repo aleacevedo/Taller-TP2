@@ -12,7 +12,8 @@ Generator::Generator(const std::vector<Compressor*> &compressors,
   }
 }
 
-void Generator::run(size_t index) {
+void Generator::run(size_t *ind) {
+  size_t index = *ind;
   size_t size_block = this->compressors[index]->get_size_block();
   size_t shift_file = this->calc_offset(size_block,
                                         index,
@@ -40,7 +41,8 @@ size_t Generator::calc_offset(size_t size_block,
   return index_file;
 }
 
-void Generator::operator()(size_t index) {
+void Generator::operator()(size_t *ind) {
+  size_t index = *ind;
   size_t size_block = this->compressors[index]->get_size_block();
   size_t shift_file = this->calc_offset(size_block,
                                         index,
