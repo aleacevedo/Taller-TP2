@@ -1,6 +1,6 @@
 #include "thread_params.h"
 
-Params::Params(Compressor &compressor,
+Params::Params(Compressor *compressor,
               size_t index,
               std::queue<std::string> *queue) : compressor(compressor),
                                                 index(index),
@@ -9,7 +9,7 @@ Params::Params(Compressor &compressor,
 
                                                 }
 
-Compressor& Params::get_compressor() {
+Compressor* Params::get_compressor() {
   return this->compressor;
 }
 

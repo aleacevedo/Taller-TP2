@@ -12,12 +12,12 @@
 
 
 class Generator {
-  const std::vector<Compressor&> &compressors;
+  const std::vector<Compressor*> &compressors;
   std::vector<Output*> outputs;
   std::mutex mutex;
   std::ifstream &in_file;
  public:
-  Generator(const std::vector<Compressor&> &Compressors, std::ifstream &in_file);
+  Generator(const std::vector<Compressor*> &Compressors, std::ifstream &in_file);
   void run();
   std::vector<Output*>& get_outputs();
   ~Generator();

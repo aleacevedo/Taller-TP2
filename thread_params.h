@@ -8,16 +8,16 @@
 
 
 class Params{
-  Compressor &compressor;
+  Compressor *compressor;
   size_t index;
   size_t processed;
   std::queue<std::string> *output;
 
  public:
-  Params(Compressor &compressor,
+  Params(Compressor *compressor,
               size_t index,
               std::queue<std::string> *output);
-  Compressor& get_compressor();
+  Compressor* get_compressor();
   size_t get_index();
   size_t get_processed();
   std::queue<std::string>* get_queue();
