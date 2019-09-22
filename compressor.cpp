@@ -54,8 +54,10 @@ int Compressor::read() {
   for (size_t readed = 0; readed < this->size_block; readed++) {
     if (!this->file_in.good()) {
       this->numbers.pop_back();
-      if (this->numbers.size() == 0)
+      if (this->numbers.size() == 0) {
+        printf("SALGO PORQUE NO HAY MAS NADA\n");
         return 0;
+      }
       for (; readed< this->size_block; readed++) {
         this->numbers.push_back(0);
       }
