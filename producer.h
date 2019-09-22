@@ -9,16 +9,16 @@
 #include "compressor.h"
 
 
-class Generator {
+class Producer {
   const std::vector<Compressor*> &compressors;
   std::vector<std::queue<std::string>*> outputs;
   std::ifstream &in_file;
   std::vector<int> thread_process;
   std::mutex mutex;
  public:
-  Generator(const std::vector<Compressor*> &Compressors, std::ifstream &in_file);
+  Producer(const std::vector<Compressor*> &Compressors, std::ifstream &in_file);
   std::vector<std::queue<std::string>*> get_outputs();
-  ~Generator();
+  ~Producer();
   void operator()(size_t index);
  private:
   size_t calc_offset(size_t size_block, size_t index, size_t run_number);
