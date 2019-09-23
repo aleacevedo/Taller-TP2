@@ -13,6 +13,7 @@ class Consumer {
   ~Consumer();
  private:
   bool all_producer_finish();
+  bool is_queue_empty(size_t ind);
 };
 
 #endif  //  _CONSUMER_H_

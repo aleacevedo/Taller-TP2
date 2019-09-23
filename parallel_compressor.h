@@ -27,6 +27,7 @@ class ParallelCompressor {
                      std::string infile,
                      std::string outfile);
   void run();
+  void wait_to_end();
   ~ParallelCompressor();
  private:
   void init_compressors();

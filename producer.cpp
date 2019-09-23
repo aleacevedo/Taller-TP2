@@ -19,6 +19,7 @@ Producer::Producer(const std::vector<Compressor*> &compressors,
     this->notifiers_write.push_back(new std::condition_variable());
     this->lockers_read.push_back(new std::mutex());
     this->lockers_write.push_back(new std::mutex());
+    this->lockers_queue.push_back(new std::mutex());
   }
 }
 
@@ -46,6 +47,10 @@ std::vector<std::mutex*> Producer::get_lockers_read() {
   return this->lockers_read;
 }
 
+std::vector<std::mutex*> Producer::get_lockers_queue() {
+  return this->lockers_queue;
+}
+
 Producer::~Producer() {
   for (size_t ind = 0; ind < this->compressors.size(); ind++) {
     delete this->outputs[ind];
@@ -53,6 +58,7 @@ Producer::~Producer() {
     delete this->notifiers_write[ind];
     delete this->lockers_read[ind];
     delete this->lockers_write[ind];
+    delete this->lockers_queue[ind];
   }
 }
 
@@ -66,13 +72,22 @@ size_t Producer::calc_offset(size_t size_block,
   return index_file;
 }
 
+void Producer::finish_production(size_t index,
+                  std::unique_lock<std::mutex> &lock_write) {
+  this->work_done[index] = true;
+  this->mutex.unlock();
+  this->notifiers_write[index]->notify_one();
+  printf("\n SE TERMINO DE PRODUCIR %zu \n", index);
+  return;
+}
+
 void Producer::operator()(size_t index) {
   printf("\n---------------PRODUCER---------------\n");
   std::unique_lock<std::mutex> lock_write(*this->lockers_write[index]);
   while (true) {
     while (this->outputs[index]->size() >= this->queue_limit) {
       printf("\nESPERO LA LECTURA\n");
-      this->notifiers_write[index]->notify_all();
+      this->notifiers_write[index]->notify_one();
       this->notifiers_read[index]->wait(lock_write);
     }
     size_t size_block = this->compressors[index]->get_size_block();
@@ -82,26 +97,22 @@ void Producer::operator()(size_t index) {
     this->mutex.lock();
     this->in_file.seekg(shift_file, this->in_file.beg);
     if (!this->in_file.good()) {
-      this->work_done[index] = true;
-      this->mutex.unlock();
-      this->notifiers_write[index]->notify_all();
-      printf("\n SE TERMINO DE PRODUCIR \n");
+      this->finish_production(index, lock_write);
       return;
     }
     if (this->compressors[index]->read() == 0) {
-      this->work_done[index] = true;
-      this->mutex.unlock();
-      this->notifiers_write[index]->notify_all();
-      printf("\n SE TERMINO DE PRODUCIR \n");
+      this->finish_production(index, lock_write);
       return;
     }
     this->mutex.unlock();
     this->compressors[index]->one_run();
     std::vector<char> &packed = this->compressors[index]->get_compressed();
     std::string out(packed.begin(), packed.end());
+    //this->lockers_queue[index]->lock();
     this->outputs[index]->push(out);
+    //this->lockers_queue[index]->unlock();
     this->thread_process[index]++;
-    this->notifiers_write[index]->notify_all();
-    printf("\nESCRIBO UNO\n");
+    this->notifiers_write[index]->notify_one();
+    printf("\nESCRIBO UNO EN EL HILO: %zu\n", index);
   }
 }

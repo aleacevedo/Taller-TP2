@@ -50,12 +50,10 @@ Compressor::~Compressor() {
 int Compressor::read() {
   char aux[4];
   this->numbers.clear();
-  printf("Reading \n");
   for (size_t readed = 0; readed < this->size_block; readed++) {
     if (!this->file_in.good()) {
       this->numbers.pop_back();
       if (this->numbers.size() == 0) {
-        printf("SALGO PORQUE NO HAY MAS NADA\n");
         return 0;
       }
       for (; readed< this->size_block; readed++) {
@@ -66,9 +64,7 @@ int Compressor::read() {
     this->file_in.read(aux, 4);
     unsigned int *aux_in = (unsigned int *) aux;
     this->numbers.push_back(ntohl(*aux_in));
-    printf("Number: %u  ", this->numbers[readed]);
   }
-  printf("\n");
   return this->file_in.gcount();
 }
 
@@ -96,7 +92,6 @@ int Compressor::subtract() {
   size_t position = 0;
   for (size_t ind = 0; ind < this->numbers.size(); ind++) {
     this->numbers[ind] = this->numbers[ind] - this->reference;
-    printf("Number: %u  ", this->numbers[ind]);
     size_t aux_pos = get_MSB_position(this->numbers[ind]);
     position = aux_pos > position ? aux_pos : position;
   }

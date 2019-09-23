@@ -22,6 +22,7 @@ class Producer {
   std::vector<std::condition_variable*> notifiers_read;
   std::vector<std::mutex*> lockers_write;
   std::vector<std::mutex*> lockers_read;
+  std::vector<std::mutex*> lockers_queue;
  public:
   Producer(const std::vector<Compressor*> &Compressors,
            std::ifstream &in_file,
@@ -32,9 +33,12 @@ class Producer {
   std::vector<std::condition_variable*>  get_notifiers_read();
   std::vector<std::mutex*> get_lockers_write();
   std::vector<std::mutex*> get_lockers_read();
+  std::vector<std::mutex*> get_lockers_queue();
   ~Producer();
   void operator()(size_t index);
  private:
+  void finish_production(size_t index,
+              std::unique_lock<std::mutex> &lock_write);
   size_t calc_offset(size_t size_block, size_t index, size_t run_number);
 };
 
