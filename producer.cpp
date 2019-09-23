@@ -108,9 +108,9 @@ void Producer::operator()(size_t index) {
     this->compressors[index]->one_run();
     std::vector<char> &packed = this->compressors[index]->get_compressed();
     std::string out(packed.begin(), packed.end());
-    //this->lockers_queue[index]->lock();
+    this->lockers_queue[index]->lock();
     this->outputs[index]->push(out);
-    //this->lockers_queue[index]->unlock();
+    this->lockers_queue[index]->unlock();
     this->thread_process[index]++;
     this->notifiers_write[index]->notify_one();
     printf("\nESCRIBO UNO EN EL HILO: %zu\n", index);

@@ -11,8 +11,7 @@ bool Consumer::all_producer_finish() {
     bool work_done = this->producer.get_work_done()[ind];
     size_t outputs = this->producer.get_outputs()[ind]->size();
     printf("EL HILO %zu ESTA %s Y LE QUEDAN %zu COSAS\n", ind, work_done? "TERMINADO" : "NO TERMINADO", outputs);
-    if (!work_done ||
-        !this->producer.get_outputs()[ind]->empty())
+    if (!work_done || !this->is_queue_empty(ind))
       return false;
   }
   return true;
@@ -34,13 +33,13 @@ void Consumer::operator() () {
       std::unique_lock<std::mutex> lock_read(
                                     *this->producer.get_lockers_read()[ind]);
       printf("\nTamano de cola del hilo %zu es : %zu\n", ind, this->producer.get_outputs()[ind]->size());
-      while (this->producer.get_outputs()[ind]->empty()) {
+      while (this->is_queue_empty(ind)) {
         if (this->producer.get_work_done()[ind]) break;
         printf("\nESPERO LA ESCRITURA DEL HILO: %zu\n", ind);
         this->producer.get_notifiers_read()[ind]->notify_one();
         this->producer.get_notifiers_write()[ind]->wait(lock_read);
       }
-      if (!this->producer.get_outputs()[ind]->empty()) {
+      if (!this->is_queue_empty(ind)) {
         std::string out = this->producer.get_outputs()[ind]->front();
         this->file_out.write(out.c_str(), out.size());
         this->producer.get_outputs()[ind]->pop();
