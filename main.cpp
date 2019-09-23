@@ -1,11 +1,26 @@
 #include <stdio.h>
-#include <fstream>
-#include <thread>
-#include "compressor.h"
-#include "producer.h"
-#include "consumer.h"
-#include "utils.h"
+#include <string>
+#include "parallel_compressor.h"
 
+
+int main(int argc, char *argv[]) {
+  if (argc < 6) return -1;
+  size_t block_size = std::stoul(std::string(argv[1]));
+  size_t queue_limit = std::stoul(std::string(argv[2]));
+  size_t thrads_number = std::stoul(std::string(argv[3]));
+  std::string infile(argv[4]);
+  std::string outfile(argv[5]);
+  if (infile == "-") infile = "stdin";
+  if (outfile == "-") outfile = "stdout";
+  ParallelCompressor parallelCompressor(block_size,
+                                        queue_limit,
+                                        thrads_number,
+                                        infile, outfile);
+  parallelCompressor.run();
+  return 0;
+}
+
+/*
 int main(int argc, char *argv[]) {
   std::ifstream file_in("alot", std::ifstream::binary);
   std::ofstream file_out("outPutWithConsumerAndQueue", std::ofstream::binary);
@@ -31,4 +46,4 @@ int main(int argc, char *argv[]) {
   file_out.close();
   return 0;
 }
-
+*/
