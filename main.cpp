@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
                                         thrads_number,
                                         infile, outfile);
   parallelCompressor.run();
+  parallelCompressor.wait_to_end();
   return 0;
 }
 

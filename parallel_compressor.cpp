@@ -22,6 +22,13 @@ void ParallelCompressor::run() {
   this->consumer_thread = new std::thread(std::ref(*this->consumer));
 }
 
+void ParallelCompressor::wait_to_end() {
+  for (size_t ind = 0; ind < this->thread_number; ind++) {
+    this->threads[ind]->join();
+  }
+  this->consumer_thread->join();
+}
+
 ParallelCompressor::~ParallelCompressor() {
   this->destroy_threads();
   this->destroy_compressors();
