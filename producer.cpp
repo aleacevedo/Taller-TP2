@@ -34,7 +34,6 @@ size_t Producer::calc_offset(size_t size_block,
 }
 
 void Producer::operator()(size_t index) {
-  printf("---------------PRODUCER---------------\n");
   SafeQueue *my_queue = this->outputs[index];
   while (true) {
     size_t size_block = this->compressors[index]->get_size_block();
@@ -44,13 +43,11 @@ void Producer::operator()(size_t index) {
     this->mutex.lock();
     this->in_file.seekg(shift_file, this->in_file.beg);
     if (!this->in_file.good()) {
-      printf("CAIGO AFUERA DEL ARCHIVO %zu\n", shift_file);
       my_queue->set_work_done();
       this->mutex.unlock();
       return;
     }
     if (this->compressors[index]->read() == 0) {
-      printf("WORK DONE PORQUE READ = 0 \n");
       my_queue->set_work_done();
       this->mutex.unlock();
       return;
@@ -60,7 +57,6 @@ void Producer::operator()(size_t index) {
     this->compressors[index]->one_run();
     std::vector<char> &packed = this->compressors[index]->get_compressed();
     std::string out(packed.begin(), packed.end());
-    printf("VOY A ESCRIBIR UNO EN EL HILO: %zu\n", index);
     my_queue->push(out);
   }
 }
