@@ -1,9 +1,15 @@
 #include "safe_queue.h"
 #include <string>
 
-SafeQueue::SafeQueue(size_t queue_limit, size_t index)
-                    : queue_limit(queue_limit),
-                      index(index) {}
+SafeQueue::SafeQueue(size_t queue_limit, size_t index) : my_queue(),
+                                                queue_limit(queue_limit),
+                                                lock_work_done(),
+                                                lock(),
+                                                notify_push(),
+                                                notify_pop(),
+                                                work_done(false),
+                                                index(index) {
+                                                }
 
 void SafeQueue::push(std::string &value) {
   std::unique_lock<std::mutex> lock_push(this->lock);
