@@ -55,10 +55,11 @@ int Compressor::read() {
       if (this->numbers.size() == 0) {
         return 1;
       }
-      unsigned int last_value = this->numbers[readed];
+      unsigned int last_value = this->numbers[readed-1];
       for (; readed < this->size_block; readed++) {
         this->numbers.push_back(last_value);
       }
+      return 0;
     }
     this->numbers.push_back(ntohl(*aux_in));
   }
