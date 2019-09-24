@@ -1,4 +1,5 @@
 #include "parallel_compressor.h"
+#include <string>
 
 ParallelCompressor::ParallelCompressor(size_t block_size,
                                       size_t queue_limit,

@@ -1,5 +1,5 @@
-#ifndef _SAFE_QUEUE_H_
-#define _SAFE_QUEUE_H_
+#ifndef SAFE_QUEUE_H_
+#define SAFE_QUEUE_H_
 
 #include <queue>
 #include <string>
@@ -25,4 +25,4 @@ class SafeQueue {
   ~SafeQueue();
 };
 
-#endif
+#endif  //  SAFE_QUEUE_H_

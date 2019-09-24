@@ -1,5 +1,7 @@
 #include "producer.h"
 #include <fstream>
+#include <string>
+#include <vector>
 
 Producer::Producer(const std::vector<Compressor*> &compressors,
                      std::ifstream &in_file,

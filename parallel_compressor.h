@@ -1,5 +1,5 @@
-#ifndef _PARALLEL_COMPRESSOR_H_
-#define _PARALLEL_COMPRESSOR_H_
+#ifndef PARALLEL_COMPRESSOR_H_
+#define PARALLEL_COMPRESSOR_H_
 
 #include <fstream>
 #include <string>
@@ -20,6 +20,7 @@ class ParallelCompressor {
   Producer *producer;
   Consumer *consumer;
   std::thread *consumer_thread;
+
  public:
   ParallelCompressor(size_t block_size,
                      size_t queue_limit,
@@ -29,6 +30,7 @@ class ParallelCompressor {
   void run();
   void wait_to_end();
   ~ParallelCompressor();
+
  private:
   void init_compressors();
   void init_threads();
@@ -36,4 +38,4 @@ class ParallelCompressor {
   void destroy_threads();
 };
 
-#endif
+#endif  // PARALLEL_COMPRESSOR_H_

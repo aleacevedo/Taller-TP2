@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <string>
 #include <math.h>
+#include <arpa/inet.h>
+#include <vector>
+
+
 
 Compressor::Compressor(std::ifstream &file_in, const size_t size_block) :
     file_in(file_in),
@@ -139,5 +143,6 @@ void Compressor::save() {
 }
 
 size_t Compressor::calculate_size_compresed() {
-  return (size_t) ceil(((this->new_len + 0.0) * this->numbers.size()) / BYTE_SIZE);
+  float aux = ((this->new_len + 0.0) * this->numbers.size())/ BYTE_SIZE;
+  return (size_t) ceil(aux);
 }

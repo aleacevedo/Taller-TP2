@@ -1,10 +1,9 @@
-#ifndef _CONSUMER_H_
-#define _CONSUMER_H_
+#ifndef CONSUMER_H_
+#define CONSUMER_H_
 
 #include "producer.h"
 
 class Consumer {
-
   Producer &producer;
   std::ofstream &file_out;
  public:
@@ -16,4 +15,4 @@ class Consumer {
   bool is_queue_empty(size_t ind);
 };
 
-#endif  //  _CONSUMER_H_
+#endif  //  CONSUMER_H_

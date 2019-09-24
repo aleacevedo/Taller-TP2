@@ -1,4 +1,5 @@
 #include "safe_queue.h"
+#include <string>
 
 SafeQueue::SafeQueue(size_t queue_limit, size_t index)
                     : queue_limit(queue_limit),
