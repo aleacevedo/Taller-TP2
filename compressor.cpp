@@ -3,8 +3,6 @@
 #include <string>
 #include <math.h>
 
-#include "utils.h"
-
 Compressor::Compressor(std::ifstream &file_in, const size_t size_block) :
     file_in(file_in),
     size_block(size_block) {
