@@ -28,7 +28,7 @@ std::string SafeQueue::pop() {
     }
     this->notify_push.wait(lock_pop);
   }
-  std::string &value = this->my_queue.front();
+  std::string value = this->my_queue.front();
   this->my_queue.pop();
   this->notify_pop.notify_one();
   return value;
