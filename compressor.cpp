@@ -51,10 +51,6 @@ int Compressor::read() {
   for (size_t readed = 0; readed < this->size_block; readed++) {
     this->file_in.read(aux, 4);
     unsigned int *aux_in = (unsigned int *) aux;
-    printf("%s TERMINO \n", this->file_in.eof()? "SI" : "NO");
-    int posFile = this->file_in.tellg();
-    printf("ESTOY EN: %i\n", posFile);
-    printf("LEI %u \n", ntohl(*aux_in));
     if (!this->file_in.good()) {
       if (this->numbers.size() == 0) {
         return 1;
