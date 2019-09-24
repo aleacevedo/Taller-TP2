@@ -9,7 +9,7 @@ Producer::Producer(const std::vector<Compressor*> &compressors,
                                       in_file(in_file) {
   for (size_t ind = 0; ind < this->compressors.size(); ind++) {
     this->thread_process.push_back(0);
-    this->outputs.push_back(new SafeQueue(queue_limit));
+    this->outputs.push_back(new SafeQueue(queue_limit, ind));
   }
 }
 
@@ -44,11 +44,15 @@ void Producer::operator()(size_t index) {
     this->mutex.lock();
     this->in_file.seekg(shift_file, this->in_file.beg);
     if (!this->in_file.good()) {
+      printf("CAIGO AFUERA DEL ARCHIVO %zu\n", shift_file);
       my_queue->set_work_done();
+      this->mutex.unlock();
       return;
     }
     if (this->compressors[index]->read() == 0) {
+      printf("WORK DONE PORQUE READ = 0 \n");
       my_queue->set_work_done();
+      this->mutex.unlock();
       return;
     }
     this->thread_process[index]++;

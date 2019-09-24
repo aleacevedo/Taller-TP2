@@ -52,18 +52,23 @@ int Compressor::read() {
     if (!this->file_in.good()) {
       this->numbers.pop_back();
       if (this->numbers.size() == 0) {
+        printf("Devuelvo 0 porque esta vacio \n");
         return 0;
       }
-      for (; readed< this->size_block; readed++) {
-        this->numbers.push_back(0);
+      readed--;
+      unsigned int last_value = this->numbers[readed];
+      for (; readed < this->size_block; readed++) {
+        this->numbers.push_back(last_value);
+        printf("REPITO NUMERO %u\n", last_value);
       }
-      return this->file_in.gcount();
+      printf("NO DEVUELVO 0\n");
+      return 1;
     }
     this->file_in.read(aux, 4);
     unsigned int *aux_in = (unsigned int *) aux;
     this->numbers.push_back(ntohl(*aux_in));
   }
-  return this->file_in.gcount();
+  return 1;
 }
 
 void Compressor::compress() {
