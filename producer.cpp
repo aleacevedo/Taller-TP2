@@ -1,7 +1,6 @@
 #include "producer.h"
 #include <fstream>
 
-
 Producer::Producer(const std::vector<Compressor*> &compressors,
                      std::ifstream &in_file,
                      size_t queue_limit) :
@@ -42,15 +41,11 @@ void Producer::operator()(size_t index) {
                                           index,
                                           this->thread_process[index]);
     this->mutex.lock();
+    this->in_file.clear();
     this->in_file.seekg(shift_file, this->in_file.beg);
-    if (!this->in_file.good()) {
-      printf("CAIGO AFUERA DEL ARCHIVO %zu\n", shift_file);
-      my_queue->set_work_done();
-      this->mutex.unlock();
-      return;
-    }
-    if (this->compressors[index]->read() == 0) {
-      printf("WORK DONE PORQUE READ = 0 \n");
+    printf("SHIFT: %zu \n", shift_file);
+    if (this->compressors[index]->read() == 1) {
+      printf("WORK DONE PORQUE READ = 1 HILO %zu \n", index);
       my_queue->set_work_done();
       this->mutex.unlock();
       return;
@@ -60,7 +55,7 @@ void Producer::operator()(size_t index) {
     this->compressors[index]->one_run();
     std::vector<char> &packed = this->compressors[index]->get_compressed();
     std::string out(packed.begin(), packed.end());
-    printf("VOY A ESCRIBIR UNO EN EL HILO: %zu\n", index);
+    //  printf("VOY A ESCRIBIR UNO EN EL HILO: %zu\n", index);
     my_queue->push(out);
   }
 }

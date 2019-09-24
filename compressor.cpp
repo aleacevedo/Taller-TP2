@@ -49,26 +49,24 @@ int Compressor::read() {
   char aux[4];
   this->numbers.clear();
   for (size_t readed = 0; readed < this->size_block; readed++) {
+    this->file_in.read(aux, 4);
+    unsigned int *aux_in = (unsigned int *) aux;
+    printf("%s TERMINO \n", this->file_in.eof()? "SI" : "NO");
+    int posFile = this->file_in.tellg();
+    printf("ESTOY EN: %i\n", posFile);
+    printf("LEI %u \n", ntohl(*aux_in));
     if (!this->file_in.good()) {
-      this->numbers.pop_back();
       if (this->numbers.size() == 0) {
-        printf("Devuelvo 0 porque esta vacio \n");
-        return 0;
+        return 1;
       }
-      readed--;
       unsigned int last_value = this->numbers[readed];
       for (; readed < this->size_block; readed++) {
         this->numbers.push_back(last_value);
-        printf("REPITO NUMERO %u\n", last_value);
       }
-      printf("NO DEVUELVO 0\n");
-      return 1;
     }
-    this->file_in.read(aux, 4);
-    unsigned int *aux_in = (unsigned int *) aux;
     this->numbers.push_back(ntohl(*aux_in));
   }
-  return 1;
+  return 0;
 }
 
 void Compressor::compress() {
