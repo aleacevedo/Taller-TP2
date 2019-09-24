@@ -6,8 +6,8 @@
 int main(int argc, char *argv[]) {
   if (argc < 6) return -1;
   size_t block_size = std::stoul(std::string(argv[1]));
-  size_t queue_limit = std::stoul(std::string(argv[2]));
-  size_t thrads_number = std::stoul(std::string(argv[3]));
+  size_t thrads_number = std::stoul(std::string(argv[2]));
+  size_t queue_limit = std::stoul(std::string(argv[3]));
   std::string infile(argv[4]);
   std::string outfile(argv[5]);
   if (infile == "-") infile = "stdin";
