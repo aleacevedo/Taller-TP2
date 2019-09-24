@@ -133,7 +133,7 @@ endif
 
 .PHONY: all clean
 
-all: $(target)
+all: clean $(target)
 
 o_files = $(patsubst %.$(extension),%.o,$(fuentes))
 
