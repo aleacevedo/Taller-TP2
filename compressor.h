@@ -1,5 +1,5 @@
-#ifndef _COMPRESSOR_H_
-#define _COMPRESSOR_H_
+#ifndef COMPRESSOR_H_
+#define COMPRESSOR_H_
 #include <stdio.h>
 #include <vector>
 #include <fstream>
@@ -12,7 +12,6 @@
 using std::vector;
 
 class Compressor {
-
   std::ifstream &file_in;
   const size_t size_block;
   size_t size_compressed;
@@ -44,4 +43,4 @@ class Compressor {
   size_t calculate_size_compresed();
 };
 
-#endif // _COMPRESSOR_H_
+#endif  //  COMPRESSOR_H_

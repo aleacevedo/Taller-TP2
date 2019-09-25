@@ -1,6 +1,7 @@
 #include "producer.h"
 #include <fstream>
-
+#include <string>
+#include <vector>
 
 Producer::Producer(const std::vector<Compressor*> &compressors,
                      std::ifstream &in_file,
@@ -41,13 +42,9 @@ void Producer::operator()(size_t index) {
                                           index,
                                           this->thread_process[index]);
     this->mutex.lock();
+    this->in_file.clear();
     this->in_file.seekg(shift_file, this->in_file.beg);
-    if (!this->in_file.good()) {
-      my_queue->set_work_done();
-      this->mutex.unlock();
-      return;
-    }
-    if (this->compressors[index]->read() == 0) {
+    if (this->compressors[index]->read() == 1) {
       my_queue->set_work_done();
       this->mutex.unlock();
       return;

@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <string>
 #include <math.h>
+#include <arpa/inet.h>
+#include <vector>
+
+
 
 Compressor::Compressor(std::ifstream &file_in, const size_t size_block) :
     file_in(file_in),
@@ -49,23 +53,21 @@ int Compressor::read() {
   char aux[4];
   this->numbers.clear();
   for (size_t readed = 0; readed < this->size_block; readed++) {
+    this->file_in.read(aux, 4);
+    unsigned int *aux_in = (unsigned int *) aux;
     if (!this->file_in.good()) {
-      this->numbers.pop_back();
       if (this->numbers.size() == 0) {
-        return 0;
+        return 1;
       }
-      readed--;
-      unsigned int last_value = this->numbers[readed];
+      unsigned int last_value = this->numbers[readed-1];
       for (; readed < this->size_block; readed++) {
         this->numbers.push_back(last_value);
       }
-      return 1;
+      return 0;
     }
-    this->file_in.read(aux, 4);
-    unsigned int *aux_in = (unsigned int *) aux;
     this->numbers.push_back(ntohl(*aux_in));
   }
-  return 1;
+  return 0;
 }
 
 void Compressor::compress() {
@@ -141,5 +143,6 @@ void Compressor::save() {
 }
 
 size_t Compressor::calculate_size_compresed() {
-  return (size_t) ceil(((this->new_len + 0.0) * this->numbers.size()) / BYTE_SIZE);
+  float aux = ((this->new_len + 0.0) * this->numbers.size())/ BYTE_SIZE;
+  return (size_t) ceil(aux);
 }

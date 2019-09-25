@@ -1,5 +1,5 @@
-#ifndef _GENERATOR_H_
-#define _GENERATOR_H_
+#ifndef PRODUCER_H_
+#define PRODUCER_H_
 #include <stdio.h>
 #include <vector>
 #include <string>
@@ -25,5 +25,5 @@ class Producer {
   size_t calc_offset(size_t size_block, size_t index, size_t run_number);
 };
 
-#endif  //  GENERATOR_H_
+#endif  //  PRODUCER_H_
 
