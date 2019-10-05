@@ -22,27 +22,27 @@ int Compressor::one_run() {
   return 0;
 }
 
-vector<uint8_t> &Compressor::get_compressed() {
+const vector<uint8_t> &Compressor::get_compressed() const {
   return this->packed;
 }
 
-size_t Compressor::get_size_block() {
+size_t Compressor::get_size_block() const {
   return this->size_block;
 }
 
-size_t Compressor::get_size_compressed() {
+size_t Compressor::get_size_compressed() const {
   return this->size_compressed;
 }
 
-size_t Compressor::get_reference() {
+size_t Compressor::get_reference() const {
   return this->reference;
 }
 
-size_t Compressor::get_new_len() {
+size_t Compressor::get_new_len() const {
   return this->new_len;
 }
 
-size_t Compressor::get_size_packed() {
+size_t Compressor::get_size_packed() const {
   return this->size_packed;
 }
 

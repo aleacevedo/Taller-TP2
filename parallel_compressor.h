@@ -25,8 +25,8 @@ class ParallelCompressor {
   ParallelCompressor(size_t block_size,
                      size_t queue_limit,
                      size_t thread_number,
-                     std::string infile,
-                     std::string outfile);
+                     const std::string &infile,
+                     const std::string &outfile);
   void run();
   void wait_to_end();
   ~ParallelCompressor();

@@ -4,8 +4,8 @@
 ParallelCompressor::ParallelCompressor(size_t block_size,
                                       size_t queue_limit,
                                       size_t thread_number,
-                                      std::string infile,
-                                      std::string outfile)
+                                      const std::string &infile,
+                                      const std::string &outfile)
                                     : block_size(block_size),
                                       queue_limit(queue_limit),
                                       thread_number(thread_number),

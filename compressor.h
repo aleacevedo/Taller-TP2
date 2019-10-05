@@ -25,12 +25,12 @@ class Compressor {
  public:
   Compressor(std::ifstream &file_in, const size_t size_block);
   int one_run();
-  vector<uint8_t> &get_compressed();
-  size_t get_size_block();
-  size_t get_size_compressed();
-  size_t get_reference();
-  size_t get_new_len();
-  size_t get_size_packed();
+  const vector<uint8_t> &get_compressed() const ;
+  size_t get_size_block() const;
+  size_t get_size_compressed() const;
+  size_t get_reference() const;
+  size_t get_new_len() const;
+  size_t get_size_packed() const;
   int read();
   ~Compressor();
 
