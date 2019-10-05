@@ -11,11 +11,13 @@
 class Producer {
   std::ifstream &in_file;
   Compressor compressor;
-  SafeQueue my_queue;
   std::mutex &mutex;
   size_t compressed;
   size_t index;
   size_t threads_num;
+  bool work_done;
+  SafeQueue my_queue;
+  std::mutex lock_work_done;
  public:
   Producer(std::ifstream &in_file,
            size_t queue_limit,
@@ -24,11 +26,14 @@ class Producer {
            size_t index,
            size_t threads_num);
   std::string get_product();
+  void set_work_done();
   bool get_work_done();
   ~Producer();
   void operator()();
  private:
-  size_t calc_offset(size_t size_block, size_t index, size_t run_number);
+  size_t calc_offset();
+  int read_file();
+  bool is_file_ended();
 };
 
 #endif  //  PRODUCER_H_
