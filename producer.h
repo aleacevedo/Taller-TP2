@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <mutex>
+#include <atomic>
 #include "compressor.h"
 #include "safe_queue.h"
 
@@ -15,9 +16,8 @@ class Producer {
   size_t compressed;
   size_t index;
   size_t threads_num;
-  bool work_done;
+  std::atomic<bool> work_done;
   SafeQueue my_queue;
-  std::mutex lock_work_done;
  public:
   Producer(std::ifstream &in_file,
            size_t queue_limit,

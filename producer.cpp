@@ -17,8 +17,7 @@ Producer::Producer(std::ifstream &in_file,
                                       index(index),
                                       threads_num(threads_num),
                                       work_done(false),
-                                      my_queue(queue_limit),
-                                      lock_work_done() {}
+                                      my_queue(queue_limit) {}
 
 std::string Producer::get_product() {
   if (this->get_work_done())
@@ -27,12 +26,10 @@ std::string Producer::get_product() {
 }
 
 bool Producer::get_work_done() {
-  std::lock_guard<std::mutex> lock(this->lock_work_done);
   return this->my_queue.is_empty() && this->work_done;
 }
 
 void Producer::set_work_done() {
-  std::lock_guard<std::mutex> lock(this->lock_work_done);
   std::condition_variable notify_work_done;
   this->work_done = true;
   this->my_queue.notify_work_done();
