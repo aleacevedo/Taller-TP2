@@ -19,9 +19,9 @@ Producer::Producer(std::ifstream &in_file,
                                       work_done(false),
                                       my_queue(queue_limit) {}
 
-std::string Producer::get_product() {
+const std::vector<uint8_t> Producer::get_product() {
   if (this->get_work_done())
-    return "";
+    return std::vector<uint8_t>();
   return this->my_queue.pop();
 }
 
@@ -71,9 +71,8 @@ void Producer::operator()() {
       return;
     }
     this->compressor.one_run();
-    std::vector<uint8_t> &packed = this->compressor.get_compressed();
-    std::string out(packed.begin(), packed.end());
-    this->my_queue.push(out);
+    const std::vector<uint8_t> &packed = this->compressor.get_compressed();
+    this->my_queue.push(std::move(packed));
     this->compressed++;
     if (this->is_file_ended()) {
       this->set_work_done();

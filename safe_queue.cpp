@@ -10,7 +10,7 @@ SafeQueue::SafeQueue(size_t queue_limit) : my_queue(),
                                               notify_pop(),
                                               work_done(false) {}
 
-void SafeQueue::push(std::string &value) {
+void SafeQueue::push(const std::vector<uint8_t> &value) {
   std::unique_lock<std::mutex> lock_push(this->lock);
   while (this->get_size() >= this->queue_limit) {
     this->notify_pop.wait(lock_push);
@@ -19,15 +19,15 @@ void SafeQueue::push(std::string &value) {
   this->notify_push.notify_all();
 }
 
-std::string SafeQueue::pop() {
+const std::vector<uint8_t> SafeQueue::pop() {
   std::unique_lock<std::mutex> lock_pop(this->lock);
   while (this->is_empty()) {
     if (work_done) {
-      return "";
+      return std::vector<uint8_t>();
     }
     this->notify_push.wait(lock_pop);
   }
-  std::string value = this->safe_pop();
+  const std::vector<uint8_t> value = this->safe_pop();
   this->notify_pop.notify_all();
   return value;
 }
@@ -51,14 +51,14 @@ bool SafeQueue::is_empty() {
 SafeQueue::~SafeQueue() {}
 
 
-void SafeQueue::safe_push(std::string &value) {
+void SafeQueue::safe_push(const std::vector<uint8_t> &value) {
   std::lock_guard<std::mutex> lock_guard(this->lock_queue);
   this->my_queue.push(value);
 }
 
-std::string SafeQueue::safe_pop() {
+const std::vector<uint8_t> SafeQueue::safe_pop() {
   std::lock_guard<std::mutex> lock_guard(this->lock_queue);
-  std::string value = this->my_queue.front();
+  const std::vector<uint8_t> value = this->my_queue.front();
   this->my_queue.pop();
   return value;
 }

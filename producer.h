@@ -25,7 +25,7 @@ class Producer {
            std::mutex &mutex,
            size_t index,
            size_t threads_num);
-  std::string get_product();
+  const std::vector<uint8_t> get_product();
   void set_work_done();
   bool get_work_done();
   ~Producer();

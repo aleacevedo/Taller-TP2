@@ -16,8 +16,10 @@ void Consumer::operator() () {
   while (!this->all_producer_finish()) {
     for (size_t ind = 0; ind < this->producers.size(); ind++) {
       if (!this->producers[ind]->get_work_done()) {
-        std::string out = this->producers[ind]->get_product();
-        this->file_out.write(out.c_str(), out.size());
+        const std::vector<uint8_t>& out = this->producers[ind]->get_product();
+        for (uint8_t num : out) {
+          this->file_out.write((const char *)&num, 1);
+        }
       }
     }
   }
