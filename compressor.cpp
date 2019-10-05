@@ -22,7 +22,7 @@ int Compressor::one_run() {
   return 0;
 }
 
-vector<char> &Compressor::get_compressed() {
+vector<uint8_t> &Compressor::get_compressed() {
   return this->packed;
 }
 
@@ -110,7 +110,7 @@ size_t Compressor::get_MSB_position(unsigned int number) {
 }
 
 void Compressor::save() {
-  char *dest = new char[this->size_compressed]();
+  std::vector<uint8_t> dest(this->size_compressed);
   unsigned int aux_big = (htonl(this->reference));
   char *aux_char = (char *) &aux_big;
   this->packed.clear();
@@ -139,7 +139,6 @@ void Compressor::save() {
   if (remain)
     this->packed.push_back(dest[ind]);
   this->size_packed = this->size_compressed + 5;
-  delete[] dest;
 }
 
 size_t Compressor::calculate_size_compresed() {

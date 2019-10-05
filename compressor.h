@@ -18,14 +18,14 @@ class Compressor {
   size_t size_packed;
   vector<unsigned int> numbers;
   vector<bool> compressed;
-  vector<char> packed;
+  vector<uint8_t> packed;
   unsigned int reference;
   unsigned int new_len;
 
  public:
   Compressor(std::ifstream &file_in, const size_t size_block);
   int one_run();
-  vector<char> &get_compressed();
+  vector<uint8_t> &get_compressed();
   size_t get_size_block();
   size_t get_size_compressed();
   size_t get_reference();
