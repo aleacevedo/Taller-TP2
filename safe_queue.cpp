@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-SafeQueue::SafeQueue(size_t queue_limit) : my_queue(),
+SafeQueue::SafeQueue(size_t queue_limit) : queue(),
                                               queue_limit(queue_limit),
                                               lock_queue(),
                                               lock(),
@@ -40,12 +40,12 @@ void SafeQueue::notify_work_done(){
 
 size_t SafeQueue::get_size() {
   std::lock_guard<std::mutex> lock(this->lock_queue);
-  return this->my_queue.size();
+  return this->queue.size();
 }
 
 bool SafeQueue::is_empty() {
   std::lock_guard<std::mutex> lock(this->lock_queue);
-  return this->my_queue.empty();
+  return this->queue.empty();
 }
 
 SafeQueue::~SafeQueue() {}
@@ -53,12 +53,12 @@ SafeQueue::~SafeQueue() {}
 
 void SafeQueue::safe_push(const std::vector<uint8_t> &value) {
   std::lock_guard<std::mutex> lock_guard(this->lock_queue);
-  this->my_queue.push(value);
+  this->queue.push(value);
 }
 
 const std::vector<uint8_t> SafeQueue::safe_pop() {
   std::lock_guard<std::mutex> lock_guard(this->lock_queue);
-  const std::vector<uint8_t> value = this->my_queue.front();
-  this->my_queue.pop();
+  const std::vector<uint8_t> value = this->queue.front();
+  this->queue.pop();
   return value;
 }
