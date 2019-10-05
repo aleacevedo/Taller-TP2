@@ -71,7 +71,7 @@ void Producer::operator()() {
       return;
     }
     this->compressor.one_run();
-    std::vector<char> &packed = this->compressor.get_compressed();
+    std::vector<uint8_t> &packed = this->compressor.get_compressed();
     std::string out(packed.begin(), packed.end());
     this->my_queue.push(out);
     this->compressed++;
