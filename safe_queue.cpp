@@ -32,7 +32,7 @@ const std::vector<uint8_t> SafeQueue::pop() {
   return value;
 }
 
-void SafeQueue::notify_work_done(){
+void SafeQueue::notify_work_done() {
   this->work_done = true;
   this->notify_pop.notify_all();
   this->notify_push.notify_all();

@@ -18,6 +18,7 @@ class Producer {
   size_t threads_num;
   std::atomic<bool> work_done;
   SafeQueue my_queue;
+
  public:
   Producer(std::ifstream &in_file,
            size_t queue_limit,
@@ -30,6 +31,7 @@ class Producer {
   bool get_work_done();
   ~Producer();
   void operator()();
+
  private:
   size_t calc_offset();
   int read_file();
