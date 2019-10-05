@@ -15,11 +15,11 @@ class ParallelCompressor {
   size_t thread_number;
   std::ifstream file_in;
   std::ofstream file_out;
-  std::vector<Compressor*> compressors;
+  std::vector<Producer*> producers;
   std::vector<std::thread*> threads;
-  Producer *producer;
-  Consumer *consumer;
+  Consumer consumer;
   std::thread *consumer_thread;
+  std::mutex mutex;
 
  public:
   ParallelCompressor(size_t block_size,
@@ -32,9 +32,9 @@ class ParallelCompressor {
   ~ParallelCompressor();
 
  private:
-  void init_compressors();
+  void init_producers();
   void init_threads();
-  void destroy_compressors();
+  void destroy_producers();
   void destroy_threads();
 };
 
