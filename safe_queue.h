@@ -14,9 +14,8 @@ class SafeQueue {
   std::condition_variable notify_push;
   std::condition_variable notify_pop;
   bool work_done;
-  size_t index;
  public:
-  SafeQueue(size_t queue_limit, size_t index);
+  SafeQueue(size_t queue_limit);
   void push(std::string &value);
   size_t size();
   std::string pop();

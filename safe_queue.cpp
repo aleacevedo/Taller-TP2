@@ -1,14 +1,13 @@
 #include "safe_queue.h"
 #include <string>
 
-SafeQueue::SafeQueue(size_t queue_limit, size_t index) : my_queue(),
+SafeQueue::SafeQueue(size_t queue_limit) : my_queue(),
                                                 queue_limit(queue_limit),
                                                 lock_work_done(),
                                                 lock(),
                                                 notify_push(),
                                                 notify_pop(),
-                                                work_done(false),
-                                                index(index) {
+                                                work_done(false) {
                                                 }
 
 void SafeQueue::push(std::string &value) {
