@@ -9,7 +9,7 @@
 #include <vector>
 
 class SafeQueue {
-  std::queue<const std::vector<uint8_t>> queue;
+  std::queue<std::vector<uint8_t>> queue;
   size_t queue_limit;
   std::mutex lock_queue;
   std::mutex lock;
