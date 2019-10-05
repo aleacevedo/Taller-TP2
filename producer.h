@@ -9,18 +9,24 @@
 
 
 class Producer {
-  const std::vector<Compressor*> &compressors;
-  std::vector<SafeQueue*> outputs;
   std::ifstream &in_file;
-  std::vector<int> thread_process;
-  std::mutex mutex;
+  Compressor compressor;
+  SafeQueue my_queue;
+  std::mutex &mutex;
+  size_t compressed;
+  size_t index;
+  size_t threads_num;
  public:
-  Producer(const std::vector<Compressor*> &Compressors,
-           std::ifstream &in_file,
-           size_t queue_limit);
-  std::vector<SafeQueue*> get_outputs();
+  Producer(std::ifstream &in_file,
+           size_t queue_limit,
+           size_t size_block,
+           std::mutex &mutex,
+           size_t index,
+           size_t threads_num);
+  std::string get_product();
+  bool get_work_done();
   ~Producer();
-  void operator()(size_t index);
+  void operator()();
  private:
   size_t calc_offset(size_t size_block, size_t index, size_t run_number);
 };

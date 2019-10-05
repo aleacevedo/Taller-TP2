@@ -3,57 +3,58 @@
 #include <string>
 #include <vector>
 
-Producer::Producer(const std::vector<Compressor*> &compressors,
-                     std::ifstream &in_file,
-                     size_t queue_limit) :
-                                      compressors(compressors),
-                                      in_file(in_file) {
-  for (size_t ind = 0; ind < this->compressors.size(); ind++) {
-    this->thread_process.push_back(0);
-    this->outputs.push_back(new SafeQueue(queue_limit, ind));
-  }
+Producer::Producer(std::ifstream &in_file,
+                   size_t queue_limit,
+                   size_t size_block,
+                   std::mutex &mutex,
+                   size_t index,
+                   size_t threads_num) :
+                                      in_file(in_file),
+                                      compressor(in_file, size_block),
+                                      my_queue(queue_limit),
+                                      mutex(mutex),
+                                      compressed(0),
+                                      index(index),
+                                      threads_num(threads_num) {}
+
+std::string Producer::get_product() {
+  return this->my_queue.pop();
 }
 
-std::vector<SafeQueue*> Producer::get_outputs() {
-  return this->outputs;
+bool Producer::get_work_done() {
+  return this->my_queue.get_work_done();
 }
 
-Producer::~Producer() {
-  for (size_t ind = 0; ind < this->compressors.size(); ind++) {
-    delete this->outputs[ind];
-  }
-}
+Producer::~Producer() {}
 
 size_t Producer::calc_offset(size_t size_block,
                               size_t index,
                               size_t run_number) {
-  size_t threads_num = this->compressors.size();
   size_t offset = (size_block * index);
-  size_t shift_len = (size_block * (threads_num * run_number));
+  size_t shift_len = (size_block * (this->threads_num * run_number));
   size_t index_file = (shift_len + offset) * 4;
   return index_file;
 }
 
-void Producer::operator()(size_t index) {
-  SafeQueue *my_queue = this->outputs[index];
+void Producer::operator()() {
   while (true) {
-    size_t size_block = this->compressors[index]->get_size_block();
+    size_t size_block = this->compressor.get_size_block();
     size_t shift_file = this->calc_offset(size_block,
-                                          index,
-                                          this->thread_process[index]);
+                                          this->index,
+                                          this->compressed);
     this->mutex.lock();
     this->in_file.clear();
     this->in_file.seekg(shift_file, this->in_file.beg);
-    if (this->compressors[index]->read() == 1) {
-      my_queue->set_work_done();
+    if (this->compressor.read() == 1) {
+      this->my_queue.set_work_done();
       this->mutex.unlock();
       return;
     }
-    this->thread_process[index]++;
+    this->compressed++;
     this->mutex.unlock();
-    this->compressors[index]->one_run();
-    std::vector<char> &packed = this->compressors[index]->get_compressed();
+    this->compressor.one_run();
+    std::vector<char> &packed = this->compressor.get_compressed();
     std::string out(packed.begin(), packed.end());
-    my_queue->push(out);
+    my_queue.push(out);
   }
 }
