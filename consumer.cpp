@@ -1,19 +1,21 @@
 #include "consumer.h"
 #include <string>
 
-Consumer::Consumer(Producer &producer,
-                   std::ofstream &file_out) : producer(producer),
-                   file_out(file_out) {
+Consumer::Consumer(std::vector<Producer*> &producers,
+                   std::ofstream &file_out) : producers(producers),
+                   file_out(file_out) {}
+
+Consumer::Consumer(Consumer&& other) : producers(other.producers),
+                                      file_out(other.file_out) {
 }
 
 Consumer::~Consumer() {}
 
 void Consumer::operator() () {
   while (!this->all_producer_finish()) {
-    for (size_t ind = 0; ind < this->producer.get_outputs().size(); ind++) {
-      SafeQueue *new_queue = this->producer.get_outputs()[ind];
-      if (!new_queue->get_work_done()) {
-        std::string out = new_queue->pop();
+    for (size_t ind = 0; ind < this->producers.size(); ind++) {
+      if (!this->producers[ind]->get_work_done()) {
+        std::string out = this->producers[ind]->get_product();
         this->file_out.write(out.c_str(), out.size());
       }
     }
@@ -21,8 +23,8 @@ void Consumer::operator() () {
 }
 
 bool Consumer::all_producer_finish() {
-  for (size_t ind = 0; ind < this->producer.get_outputs().size(); ind++) {
-    if (!this->producer.get_outputs()[ind]->get_work_done())
+  for (size_t ind = 0; ind < this->producers.size(); ind++) {
+    if (!this->producers[ind]->get_work_done())
       return false;
   }
   return true;

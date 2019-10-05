@@ -1,13 +1,15 @@
 #ifndef CONSUMER_H_
 #define CONSUMER_H_
 
+#include <vector>
 #include "producer.h"
 
 class Consumer {
-  Producer &producer;
+  std::vector<Producer*> &producers;
   std::ofstream &file_out;
  public:
-  Consumer(Producer &producer, std::ofstream &file_out);
+  Consumer(std::vector<Producer*> &producers, std::ofstream &file_out);
+  Consumer(Consumer&& other);
   void operator() ();
   ~Consumer();
  private:
