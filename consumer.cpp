@@ -1,4 +1,5 @@
 #include "consumer.h"
+#include <iostream>
 #include <string>
 
 Consumer::Consumer(std::vector<Producer*> &producers,
