@@ -1,6 +1,7 @@
 #include "consumer.h"
 #include <iostream>
 #include <string>
+#include <vector>
 
 Consumer::Consumer(std::vector<Producer*> &producers,
                    std::ofstream &file_out) : producers(producers),

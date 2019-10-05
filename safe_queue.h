@@ -17,7 +17,7 @@ class SafeQueue {
   std::condition_variable notify_pop;
   std::atomic<bool> work_done;
  public:
-  SafeQueue(size_t queue_limit);
+  explicit SafeQueue(size_t queue_limit);
   void push(const std::vector<uint8_t> &value);
   size_t size();
   const std::vector<uint8_t> pop();
