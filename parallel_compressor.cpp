@@ -1,16 +1,17 @@
 #include "parallel_compressor.h"
 #include <string>
+#include <iostream>
 
 ParallelCompressor::ParallelCompressor(size_t block_size,
                                       size_t queue_limit,
                                       size_t thread_number,
-                                      const std::string &infile,
-                                      const std::string &outfile)
+                                      std::istream &infile,
+                                      std::ostream &outfile)
                                     : block_size(block_size),
                                       queue_limit(queue_limit),
                                       thread_number(thread_number),
-                                      file_in(infile, std::ifstream::binary),
-                                      file_out(outfile, std::ofstream::binary),
+                                      file_in(infile),
+                                      file_out(outfile),
                                       producers(),
                                       threads(),
                                       consumer(producers, file_out),
@@ -34,8 +35,6 @@ ParallelCompressor::~ParallelCompressor() {
   this->destroy_threads();
   this->destroy_producers();
   delete this->consumer_thread;
-  file_in.close();
-  file_out.close();
 }
 
 void ParallelCompressor::init_producers() {

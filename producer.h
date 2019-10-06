@@ -10,7 +10,7 @@
 
 
 class Producer {
-  std::ifstream &in_file;
+  std::istream &in_file;
   Compressor compressor;
   std::mutex &mutex;
   size_t compressed;
@@ -20,7 +20,7 @@ class Producer {
   SafeQueue my_queue;
 
  public:
-  Producer(std::ifstream &in_file,
+  Producer(std::istream &in_file,
            size_t queue_limit,
            size_t size_block,
            std::mutex &mutex,

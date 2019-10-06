@@ -13,8 +13,8 @@ class ParallelCompressor {
   size_t block_size;
   size_t queue_limit;
   size_t thread_number;
-  std::ifstream file_in;
-  std::ofstream file_out;
+  std::istream &file_in;
+  std::ostream &file_out;
   std::vector<Producer*> producers;
   std::vector<std::thread*> threads;
   Consumer consumer;
@@ -25,8 +25,8 @@ class ParallelCompressor {
   ParallelCompressor(size_t block_size,
                      size_t queue_limit,
                      size_t thread_number,
-                     const std::string &infile,
-                     const std::string &outfile);
+                     std::istream &infile,
+                     std::ostream &outfile);
   void run();
   void wait_to_end();
   ~ParallelCompressor();

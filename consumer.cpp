@@ -4,7 +4,7 @@
 #include <vector>
 
 Consumer::Consumer(std::vector<Producer*> &producers,
-                   std::ofstream &file_out) : producers(producers),
+                   std::ostream &file_out) : producers(producers),
                    file_out(file_out) {}
 
 Consumer::Consumer(Consumer&& other) : producers(other.producers),

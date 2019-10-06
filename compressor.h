@@ -12,7 +12,7 @@
 using std::vector;
 
 class Compressor {
-  std::ifstream &file_in;
+  std::istream &file_in;
   const size_t size_block;
   size_t size_compressed;
   size_t size_packed;
@@ -23,7 +23,7 @@ class Compressor {
   unsigned int new_len;
 
  public:
-  Compressor(std::ifstream &file_in, const size_t size_block);
+  Compressor(std::istream &file_in, const size_t size_block);
   int one_run();
   const vector<uint8_t> &get_compressed() const;
   size_t get_size_block() const;

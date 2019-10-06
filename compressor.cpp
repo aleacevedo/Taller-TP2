@@ -7,7 +7,7 @@
 
 
 
-Compressor::Compressor(std::ifstream &file_in, const size_t size_block) :
+Compressor::Compressor(std::istream &file_in, const size_t size_block) :
     file_in(file_in),
     size_block(size_block) {
 }

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-Producer::Producer(std::ifstream &in_file,
+Producer::Producer(std::istream &in_file,
                    size_t queue_limit,
                    size_t size_block,
                    std::mutex &mutex,

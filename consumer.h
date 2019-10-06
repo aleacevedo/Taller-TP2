@@ -6,9 +6,9 @@
 
 class Consumer {
   std::vector<Producer*> &producers;
-  std::ofstream &file_out;
+  std::ostream &file_out;
  public:
-  Consumer(std::vector<Producer*> &producers, std::ofstream &file_out);
+  Consumer(std::vector<Producer*> &producers, std::ostream &file_out);
   Consumer(Consumer&& other);
   void operator() ();
   ~Consumer();
